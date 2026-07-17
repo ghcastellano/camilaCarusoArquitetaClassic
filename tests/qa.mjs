@@ -10,15 +10,15 @@ const browser = await chromium.launch({ headless: true });
 const results = [];
 
 async function runViewport(name, viewport) {
-  const context = await browser.newContext({ viewport, deviceScaleFactor: 1 });
   for (const path of ['/', '/residencial', '/saude']) {
+    const context = await browser.newContext({ viewport, deviceScaleFactor: 1 });
     const page = await context.newPage();
     const errors = [];
     const failed = [];
     page.on('console', (msg) => { if (msg.type() === 'error') errors.push(msg.text()); });
     page.on('pageerror', (error) => errors.push(error.message));
     page.on('requestfailed', (request) => failed.push(`${request.url()} :: ${request.failure()?.errorText}`));
-    await page.goto(`${base}${path}`, { waitUntil: 'networkidle' });
+    await page.goto(`${base}${path}`, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1300);
     await page.screenshot({ path: new URL(`${name}-${path === '/' ? 'home' : path.slice(1)}-hero.png`, out).pathname });
 
@@ -42,8 +42,8 @@ async function runViewport(name, viewport) {
     }
     results.push({ name, path, layout, errors, failed });
     await page.close();
+    await context.close();
   }
-  await context.close();
 }
 
 await runViewport('desktop', { width: 1440, height: 900 });
@@ -93,7 +93,7 @@ async function runResponsiveAudit(name, viewport) {
     const errors = [];
     page.on('pageerror', (error) => errors.push(error.message));
     page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
-    await page.goto(`${base}${path}`, { waitUntil: 'networkidle' });
+    await page.goto(`${base}${path}`, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(500);
 
     const audit = await page.evaluate(({ copy }) => {
@@ -169,7 +169,7 @@ for (const item of [
 {
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await context.newPage();
-  await page.goto(base, { waitUntil: 'networkidle' });
+  await page.goto(base, { waitUntil: 'domcontentloaded' });
   await page.getByRole('heading', { name: /Ideias ganham forma/ }).scrollIntoViewIfNeeded();
   await page.waitForTimeout(2200);
   const canvas = page.locator('canvas');
@@ -202,11 +202,72 @@ for (const item of [
   const galleryButton = page.locator('button[aria-label^="Ampliar projeto"]');
   if (await galleryButton.count() < 1) throw new Error('Portfolio buttons missing');
   await galleryButton.first().click();
-  await page.getByRole('dialog').waitFor({ state: 'visible' });
-  await page.getByRole('button', { name: 'Próximo projeto' }).click();
-  await page.getByRole('button', { name: 'Fechar imagem' }).click();
-  await page.getByRole('dialog').waitFor({ state: 'hidden' });
-  results.push({ interaction: 'home lightbox + animated process canvas', ok: true, canvasPixels: { standardDeviation: Number(standardDeviation.toFixed(2)), meanFrameDiff: Number(meanFrameDiff.toFixed(3)) } });
+  const dialog = page.getByRole('dialog');
+  await dialog.waitFor({ state: 'visible' });
+  await dialog.getByRole('button', { name: 'Próximo projeto' }).click();
+  await dialog.getByRole('button', { name: 'Fechar imagem' }).click();
+  await dialog.waitFor({ state: 'hidden' });
+
+  const secondProject = page.getByRole('button', { name: 'Mostrar projeto Apartamento Passeo' }).first();
+  await secondProject.click();
+  if ((await secondProject.getAttribute('aria-pressed')) !== 'true') throw new Error('Editorial project index did not update');
+
+  const archiveHeading = page.getByRole('heading', { name: 'Duas décadas de projetos.' });
+  const archiveSection = archiveHeading.locator('xpath=ancestor::section[1]');
+  await archiveSection.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(700);
+  const archiveChoice = page.getByRole('button', { name: 'Mostrar projeto Cozinha azul' });
+  await archiveChoice.click();
+  if ((await archiveChoice.getAttribute('aria-pressed')) !== 'true') throw new Error('Archive index did not update');
+  await archiveSection.screenshot({ path: new URL('desktop-home-archive-editorial.png', out).pathname });
+
+  results.push({ interaction: 'editorial portfolio + archive + lightbox + animated process canvas', ok: true, canvasPixels: { standardDeviation: Number(standardDeviation.toFixed(2)), meanFrameDiff: Number(meanFrameDiff.toFixed(3)) } });
+  await context.close();
+}
+
+// Mobile portfolio rails stay uniform, navigable and large enough to inspect.
+{
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+  for (const path of ['/', '/residencial', '/saude']) {
+    const page = await context.newPage();
+    await page.goto(`${base}${path}`, { waitUntil: 'domcontentloaded' });
+    const rail = page.locator('[data-portfolio-rail]');
+    await rail.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(700);
+
+    const metrics = await rail.locator('[data-portfolio-card]').evaluateAll((cards) => cards.map((card) => {
+      const box = card.getBoundingClientRect();
+      const image = card.querySelector('img')?.getBoundingClientRect();
+      return { height: Math.round(box.height), width: Math.round(box.width), imageWidth: Math.round(image?.width ?? 0) };
+    }));
+    const heights = metrics.map((item) => item.height);
+    if (!heights.length || Math.max(...heights) - Math.min(...heights) > 2) throw new Error(`Unequal mobile portfolio cards on ${path}: ${JSON.stringify(metrics)}`);
+    if (Math.min(...metrics.map((item) => item.width)) < 300) throw new Error(`Mobile portfolio cards are too small on ${path}: ${JSON.stringify(metrics)}`);
+
+    const before = await rail.evaluate((element) => element.scrollLeft);
+    await rail.locator('xpath=..').getByRole('button', { name: 'Próximo projeto' }).click();
+    await page.waitForTimeout(650);
+    const after = await rail.evaluate((element) => element.scrollLeft);
+    if (after <= before) throw new Error(`Mobile portfolio next control did not move on ${path}`);
+    await page.screenshot({ path: new URL(`mobile-editorial-${path === '/' ? 'home' : path.slice(1)}.png`, out).pathname });
+    results.push({ interaction: `mobile editorial portfolio ${path}`, ok: true, cardMetrics: metrics });
+    await page.close();
+  }
+
+  const archivePage = await context.newPage();
+  await archivePage.goto(base, { waitUntil: 'domcontentloaded' });
+  const archiveRail = archivePage.getByLabel('Acervo de projetos; deslize para explorar');
+  await archiveRail.scrollIntoViewIfNeeded();
+  await archivePage.waitForTimeout(700);
+  const archiveMetrics = await archiveRail.locator('[data-archive-card]').evaluateAll((cards) => cards.map((card) => ({
+    height: Math.round(card.getBoundingClientRect().height),
+    width: Math.round(card.getBoundingClientRect().width),
+  })));
+  const archiveHeights = archiveMetrics.map((item) => item.height);
+  if (!archiveHeights.length || Math.max(...archiveHeights) - Math.min(...archiveHeights) > 2) throw new Error(`Unequal archive cards: ${JSON.stringify(archiveMetrics)}`);
+  await archivePage.screenshot({ path: new URL('mobile-editorial-archive.png', out).pathname });
+  results.push({ interaction: 'mobile editorial archive', ok: true, cardMetrics: archiveMetrics });
+  await archivePage.close();
   await context.close();
 }
 
@@ -214,7 +275,7 @@ for (const item of [
 {
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await context.newPage();
-  await page.goto(base, { waitUntil: 'networkidle' });
+  await page.goto(base, { waitUntil: 'domcontentloaded' });
   const mainNav = page.getByRole('navigation', { name: 'Navegação principal' });
   await mainNav.getByRole('link', { name: 'Camila Caruso' }).click();
   await page.waitForTimeout(1800);
@@ -233,7 +294,7 @@ for (const item of [
 {
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await context.newPage();
-  await page.goto(`${base}/residencial`, { waitUntil: 'networkidle' });
+  await page.goto(`${base}/residencial`, { waitUntil: 'domcontentloaded' });
   const localNav = page.getByRole('navigation', { name: 'Seções de Residencial' });
   await localNav.getByRole('link', { name: 'Processo' }).click();
   await page.waitForTimeout(1800);
@@ -253,11 +314,16 @@ for (const item of [
 {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
-  await page.goto(base, { waitUntil: 'networkidle' });
+  await page.goto(base, { waitUntil: 'domcontentloaded' });
   const menu = page.getByRole('button', { name: 'Abrir menu' });
   await menu.click();
   await page.getByRole('navigation', { name: 'Menu móvel' }).waitFor({ state: 'visible' });
   await page.waitForTimeout(350);
+  const quickContact = page.getByRole('group', { name: 'Contato rápido' });
+  await quickContact.waitFor({ state: 'visible' });
+  for (const label of ['E-mail', 'Instagram', 'Facebook']) {
+    if (await quickContact.getByRole('link', { name: new RegExp(label) }).count() !== 1) throw new Error(`Missing mobile quick contact: ${label}`);
+  }
   await page.getByRole('navigation', { name: 'Menu móvel' }).getByRole('link', { name: /Camila Caruso/ }).click();
   await page.waitForTimeout(1800);
   const aboutTop = await page.locator('#sobre').evaluate((element) => Math.round(element.getBoundingClientRect().top));
@@ -270,7 +336,7 @@ for (const item of [
 {
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await context.newPage();
-  await page.goto(`${base}/residencial`, { waitUntil: 'networkidle' });
+  await page.goto(`${base}/residencial`, { waitUntil: 'domcontentloaded' });
   const faq = page.getByRole('button', { name: 'Como funciona o acompanhamento durante a obra?' });
   await faq.click();
   if ((await faq.getAttribute('aria-expanded')) !== 'true') throw new Error('FAQ did not expand');
@@ -292,7 +358,7 @@ for (const item of [
 {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
-  await page.goto(`${base}/saude`, { waitUntil: 'networkidle' });
+  await page.goto(`${base}/saude`, { waitUntil: 'domcontentloaded' });
   await page.locator('input[placeholder="Seu nome"]').fill('Teste Saúde');
   await page.locator('input[placeholder="(11) 98765-4321"]').fill('(11) 99999-9999');
   await page.locator('input[placeholder="voce@email.com"]').fill('saude@example.com');

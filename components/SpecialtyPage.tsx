@@ -7,7 +7,7 @@ import SectionHeading from './SectionHeading';
 import Reveal from './ui/Reveal';
 import ParallaxImage from './ui/ParallaxImage';
 import ProcessTimeline from './ProcessTimeline';
-import PortfolioGallery, { type Project } from './PortfolioGallery';
+import PortfolioShowcase, { type Project } from './PortfolioShowcase';
 import Accordion from './Accordion';
 import ContactForm from './ContactForm';
 import Footer from './Footer';
@@ -49,7 +49,7 @@ export default function SpecialtyPage({ variant }: { variant: 'residential' | 'h
                 <Reveal key={item.title} delay={index * .07} className="h-full">
                   <article className="flex h-full min-h-[280px] flex-col justify-between border-b border-ink/20 p-6 md:border-r lg:p-8">
                     <span className="font-display text-3xl text-brass-dark">0{index + 1}</span>
-                    <div><h3 className="font-display text-3xl leading-none">{item.title}</h3><p className="mt-5 text-sm leading-7 text-ink/60">{item.text}</p></div>
+                    <div><h3 className="font-display text-3xl leading-[1.02]">{item.title}</h3><p className="mt-5 text-sm leading-7 text-ink/60">{item.text}</p></div>
                   </article>
                 </Reveal>
               ))}
@@ -69,7 +69,7 @@ export default function SpecialtyPage({ variant }: { variant: 'residential' | 'h
             <div className="flex min-w-0 items-center p-7 sm:p-12 lg:p-16 xl:p-24">
               <div className="min-w-0 max-w-full">
                 <p className="eyebrow text-brass">Visão</p>
-                <h2 className="mt-7 max-w-full break-words font-display text-[clamp(2.85rem,5.5vw,6rem)] leading-[.92]">{data.manifesto.title}</h2>
+                <h2 className="mt-7 max-w-full break-words font-display text-[clamp(2.85rem,5.5vw,6rem)] leading-[1.02]">{data.manifesto.title}</h2>
                 {isHealth ? (
                   <>
                     <p className="mt-7 text-sm leading-8 text-white/65">{(data as HealthData).manifesto.text}</p>
@@ -97,7 +97,7 @@ export default function SpecialtyPage({ variant }: { variant: 'residential' | 'h
         <section id="portfolio" className="specialty-anchor bg-paper py-24 sm:py-32 lg:py-40">
           <div className="container-shell">
             <SectionHeading eyebrow="Portfólio" title={isHealth ? 'Clínicas que geram confiança e bem-estar.' : 'Espaços que transformam vidas.'} text={isHealth ? 'Conheça os ambientes que projetamos para líderes da saúde.' : 'Veja alguns dos sonhos que tivemos a honra de realizar.'} />
-            <div className="mt-16 lg:mt-24"><PortfolioGallery projects={projects} /></div>
+            <div className="mt-16 lg:mt-24"><PortfolioShowcase projects={projects} /></div>
           </div>
         </section>
 
@@ -129,7 +129,8 @@ export default function SpecialtyPage({ variant }: { variant: 'residential' | 'h
               <ParallaxImage
                 src="/assets/profile/camila-portrait.jpeg"
                 alt="Camila Caruso, arquiteta"
-                sizes="(max-width:1023px) 100vw, 620px"
+                sizes="(max-width:480px) 85vw, (max-width:1023px) 100vw, 620px"
+                quality={88}
                 className="mx-auto aspect-[4/5] w-full max-w-[620px]"
                 imageClassName="object-cover object-top"
               />

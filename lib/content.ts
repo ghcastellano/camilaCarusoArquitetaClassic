@@ -32,24 +32,22 @@ export const homeFeaturedProjects = [
 ];
 
 export const homeArchiveProjects = [
-  '/assets/home/projeto-1.jpg',
-  '/assets/home/projeto-2.jpg',
-  '/assets/home/projeto-3.jpg',
-  '/assets/home/projeto-4.jpg',
-  '/assets/home/portfolio-5.jpg',
-  '/assets/home/portfolio-6.jpeg',
-  '/assets/home/portfolio-7.jpeg',
-  '/assets/home/portfolio-8.jpeg',
-  '/assets/home/projeto-9.jpg',
-  '/assets/home/projeto-10.jpg',
-  '/assets/home/projeto-11.jpg',
-  '/assets/home/projeto-12.jpg',
-].map((src, index) => ({
-  src,
-  title: `Projeto autoral ${String(index + 1).padStart(2, '0')}`,
-  location: 'Acervo do escritório',
-  ratio: 'square',
-  size: 'compact',
+  { src: '/assets/home/projeto-1.jpg', title: 'Terraço para a paisagem', location: 'Exteriores · estudo residencial' },
+  { src: '/assets/home/projeto-2.jpg', title: 'Cozinha e jantar integrados', location: 'Interiores · estudo residencial' },
+  { src: '/assets/home/projeto-3.jpg', title: 'Suíte em tons naturais', location: 'Interiores · estudo residencial' },
+  { src: '/assets/home/projeto-4.jpg', title: 'Banho essencial', location: 'Interiores · estudo residencial' },
+  { src: '/assets/home/portfolio-5.jpg', title: 'Residência urbana', location: 'Arquitetura · estudo de fachada' },
+  { src: '/assets/home/portfolio-6.jpeg', title: 'Fachada contemporânea', location: 'Arquitetura · estudo de fachada' },
+  { src: '/assets/home/portfolio-7.jpeg', title: 'Casa 1484', location: 'Arquitetura · estudo de fachada' },
+  { src: '/assets/home/portfolio-8.jpeg', title: 'Casa térrea com piscina', location: 'Exteriores · estudo residencial' },
+  { src: '/assets/home/projeto-9.jpg', title: 'Living integrado', location: 'Interiores · estudo residencial' },
+  { src: '/assets/home/projeto-10.jpg', title: 'Estar com pé-direito duplo', location: 'Interiores · estudo residencial' },
+  { src: '/assets/home/projeto-11.jpg', title: 'Cozinha azul', location: 'Interiores · estudo residencial' },
+  { src: '/assets/home/projeto-12.jpg', title: 'Cozinha e convivência', location: 'Interiores · estudo residencial' },
+].map((project) => ({
+  ...project,
+  ratio: 'square' as const,
+  size: 'compact' as const,
   lowResolution: true,
 }));
 

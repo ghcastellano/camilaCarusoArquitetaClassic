@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { AnimatePresence, motion, useScroll } from 'framer-motion';
-import { ArrowUpRight, Menu, X } from 'lucide-react';
+import { ArrowUpRight, Mail, Menu, Phone, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { messages, whatsappUrl } from '@/lib/content';
+import { contact, messages, whatsappUrl } from '@/lib/content';
 
 export type HeaderVariant = 'home' | 'residential' | 'health';
 
@@ -57,14 +57,15 @@ export default function Header({ variant = 'home' }: { variant?: HeaderVariant }
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-ink/10 bg-white/95 text-ink backdrop-blur-xl">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-ink/10 bg-white text-ink">
         <div className="container-shell flex h-[72px] items-center justify-between lg:h-[84px]">
           <Link href="/" aria-label="Camila Caruso — página inicial" className="relative z-10 shrink-0">
             <Image
-              src="/assets/brand/logo-specialty-original.png"
+              src="/assets/brand/logo-specialty-transparent.png"
               alt=""
-              width={1312}
-              height={276}
+              width={248}
+              height={52}
+              sizes="(max-width: 639px) 204px, (max-width: 1023px) 228px, 248px"
               className="h-auto w-[204px] object-contain sm:w-[228px] lg:w-[248px]"
               priority
             />
@@ -107,7 +108,7 @@ export default function Header({ variant = 'home' }: { variant?: HeaderVariant }
             transition={{ duration: .25 }}
             className="fixed inset-x-0 bottom-0 top-[72px] z-[45] overflow-y-auto bg-white pb-[max(20px,env(safe-area-inset-bottom))] pt-3"
           >
-            <div className="container-shell flex min-h-full flex-col justify-between gap-7">
+            <div className="container-shell flex min-h-full flex-col gap-5">
               <nav aria-label="Menu móvel" className="border-t border-ink/15">
                 {links.map((link, index) => {
                   const active = isActive(link);
@@ -125,9 +126,20 @@ export default function Header({ variant = 'home' }: { variant?: HeaderVariant }
                   );
                 })}
               </nav>
-              <a href={whatsappUrl(message)} target="_blank" rel="noopener noreferrer" className="flex min-h-12 items-center justify-between bg-ink px-5 py-4 text-xs font-semibold uppercase tracking-[.16em] text-white">
-                {variant === 'health' ? 'Analisar minha clínica' : variant === 'residential' ? 'Iniciar meu projeto' : 'Fale conosco'} <ArrowUpRight className="h-5 w-5" />
-              </a>
+              <div className="mt-auto">
+                <div role="group" aria-label="Contato rápido" className="border-y border-ink/15 py-3">
+                  <p className="mb-2 text-[9px] font-semibold uppercase tracking-[.17em] text-brass-dark">Contato rápido</p>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px] text-ink/70">
+                    <a href={`tel:${contact.primaryPhoneDigits}`} className="inline-flex min-h-8 items-center gap-2"><Phone className="h-3.5 w-3.5 text-brass-dark" />{contact.primaryPhone.replace('+55 11 ', '(11) ')}</a>
+                    <a href={`mailto:${contact.email}`} className="inline-flex min-h-8 items-center gap-2"><Mail className="h-3.5 w-3.5 text-brass-dark" />E-mail</a>
+                    <a href={contact.instagram} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-8 items-center gap-2">Instagram<ArrowUpRight className="h-3.5 w-3.5 text-brass-dark" /></a>
+                    <a href={contact.facebook} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-8 items-center gap-2">Facebook<ArrowUpRight className="h-3.5 w-3.5 text-brass-dark" /></a>
+                  </div>
+                </div>
+                <a href={whatsappUrl(message)} target="_blank" rel="noopener noreferrer" className="mt-3 flex min-h-12 items-center justify-between bg-ink px-5 py-4 text-xs font-semibold uppercase tracking-[.16em] text-white">
+                  {variant === 'health' ? 'Analisar minha clínica' : variant === 'residential' ? 'Iniciar meu projeto' : 'Fale conosco'} <ArrowUpRight className="h-5 w-5" />
+                </a>
+              </div>
             </div>
           </motion.div>
         )}

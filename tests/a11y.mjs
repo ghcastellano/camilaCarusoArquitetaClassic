@@ -15,7 +15,7 @@ for (const viewport of [
 
   for (const path of ['/', '/residencial', '/saude']) {
     const page = await context.newPage();
-    await page.goto(`${base}${path}`, { waitUntil: 'networkidle' });
+    await page.goto(`${base}${path}`, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(800);
 
     const report = await new AxeBuilder({ page }).analyze();

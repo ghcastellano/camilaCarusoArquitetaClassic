@@ -41,7 +41,7 @@ export default function Footer({ variant = 'home' }: { variant?: HeaderVariant }
         <div className="grid gap-12 border-b border-white/15 pb-14 lg:grid-cols-[1.25fr_.75fr] lg:items-end lg:pb-20">
           <div>
             <p className="eyebrow text-brass">Agende uma reunião conosco</p>
-            <h2 className="mt-7 max-w-4xl font-display text-[clamp(3.1rem,6vw,6.2rem)] leading-[.88]">
+            <h2 className="mt-7 max-w-4xl font-display text-[clamp(3.1rem,6vw,6.2rem)] leading-[1.02]">
               Seu próximo espaço começa com uma boa conversa.
             </h2>
           </div>
@@ -57,8 +57,8 @@ export default function Footer({ variant = 'home' }: { variant?: HeaderVariant }
             <Image
               src={specialty ? '/assets/brand/logo-specialty-footer-cropped.png' : '/assets/brand/logo-home-footer.png'}
               alt="Camila Caruso Arquitetura e Interiores"
-              width={specialty ? 1563 : 220}
-              height={specialty ? 278 : 50}
+              width={specialty ? 250 : 220}
+              height={specialty ? 45 : 50}
               className={specialty ? 'h-auto w-[250px] max-w-full' : 'h-auto w-[220px] max-w-full'}
             />
             <p className="mt-6 max-w-sm text-sm leading-7 text-white/65">Desenvolvemos projetos integrando ambientes, vivência e experiência humana. Ambientes humanizados, com atendimento personalizado e gestão integral.</p>

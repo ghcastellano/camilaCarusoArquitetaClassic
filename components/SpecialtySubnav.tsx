@@ -43,14 +43,14 @@ export default function SpecialtySubnav({ variant }: { variant: 'residential' | 
   }, [links]);
 
   return (
-    <div className="sticky top-[72px] z-30 border-y border-ink/10 bg-white/95 backdrop-blur-xl lg:top-[84px]">
-      <div className="scrollbar-none container-shell flex h-[52px] items-center gap-7 overflow-x-auto lg:h-[56px]">
-        <p className="sticky left-0 z-10 shrink-0 border-r border-ink/15 bg-white pr-7 text-[10px] font-semibold uppercase tracking-[.16em] text-brass-dark lg:text-[11px]">
+    <div className="sticky top-[72px] z-30 border-y border-ink/10 bg-white lg:top-[84px]">
+      <div className="scrollbar-none container-shell flex h-[54px] items-center gap-7 overflow-x-auto lg:h-[60px]">
+        <p className="sticky left-0 z-10 shrink-0 border-r border-ink/15 bg-white pr-7 text-[11px] font-semibold uppercase tracking-[.14em] text-brass-dark lg:text-[12px]">
           {variant === 'health' ? 'Arquitetura para saúde' : 'Arquitetura residencial'}
         </p>
-        <nav aria-label={`Seções de ${variant === 'health' ? 'Saúde' : 'Residencial'}`} className="flex shrink-0 items-center gap-6 pr-4 text-[10px] font-semibold uppercase tracking-[.13em] text-ink/65 lg:gap-7 lg:text-[11px]">
+        <nav aria-label={`Seções de ${variant === 'health' ? 'Saúde' : 'Residencial'}`} className="flex shrink-0 items-center gap-6 pr-4 text-[11px] font-semibold uppercase tracking-[.11em] text-ink/65 lg:gap-8 lg:text-[12px] xl:text-[13px]">
           {links.map((link) => (
-            <Link key={link.href} href={link.href} aria-current={active === link.id ? 'location' : undefined} className={`relative flex h-[52px] items-center whitespace-nowrap transition-colors lg:h-[56px] ${active === link.id ? 'text-ink' : 'hover:text-ink'}`}>
+            <Link key={link.href} href={link.href} aria-current={active === link.id ? 'location' : undefined} className={`relative flex h-[54px] items-center whitespace-nowrap transition-colors lg:h-[60px] ${active === link.id ? 'text-ink' : 'hover:text-ink'}`}>
               {link.label}
               <span className={`absolute inset-x-0 bottom-0 h-px bg-brass transition-transform ${active === link.id ? 'scale-x-100' : 'scale-x-0'}`} />
             </Link>

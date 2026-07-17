@@ -2,7 +2,7 @@
 const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
-    qualities: [75, 90],
+    qualities: [75, 82, 88, 90, 92],
   },
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion'],

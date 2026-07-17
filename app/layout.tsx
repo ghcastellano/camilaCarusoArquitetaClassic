@@ -22,7 +22,11 @@ export const metadata: Metadata = {
   },
   description:
     'Há 20 anos criando espaços que transformam vidas. Arquitetura residencial de alto padrão e projetos especializados para saúde.',
-  icons: { icon: '/assets/brand/favicon.png' },
+  icons: {
+    icon: [{ url: '/assets/brand/favicon.png?v=2', type: 'image/png', sizes: '512x512' }],
+    shortcut: '/assets/brand/favicon.png?v=2',
+    apple: '/assets/brand/favicon.png?v=2',
+  },
   openGraph: {
     title: 'Camila Caruso — Arquitetura e Interiores',
     description: 'Projetos autorais, gestão rigorosa e espaços que transformam vidas.',

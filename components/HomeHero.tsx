@@ -15,7 +15,7 @@ export default function HomeHero() {
   return (
     <section id="home" ref={root} className="noise relative mt-[72px] h-[calc(92svh-72px)] min-h-[500px] max-h-[800px] overflow-hidden bg-ink text-white lg:mt-[84px] lg:h-[calc(94svh-84px)] lg:min-h-[640px] lg:max-h-[920px]">
       <div className="absolute inset-0">
-        <Image src="/assets/home/banner-homepage-1.jpg" alt="Suíte contemporânea projetada pelo escritório Camila Caruso" fill preload quality={90} sizes="100vw" className="object-cover object-[58%_center] sm:object-center" />
+        <Image src="/assets/home/banner-homepage-1.jpg" alt="Suíte contemporânea projetada pelo escritório Camila Caruso" fill preload fetchPriority="high" decoding="sync" quality={82} sizes="100vw" className="object-cover object-[58%_center] sm:object-center" />
       </div>
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,11,10,.88)_0%,rgba(10,11,10,.58)_42%,rgba(10,11,10,.08)_76%,rgba(10,11,10,.20)_100%)]" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
@@ -23,7 +23,7 @@ export default function HomeHero() {
       <div className="container-shell relative z-10 flex h-full items-end pb-8 pt-24 sm:pb-12 lg:items-center lg:pb-0 lg:pt-0">
         <motion.div style={{ y: copyY, opacity: copyOpacity }} className="max-w-[760px] lg:-translate-y-2">
           <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .8, delay: .15 }} className="eyebrow text-brass">Arquitetura & interiores</motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 35 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: .24, ease: [0.22,1,.36,1] }} className="mt-5 font-display text-[clamp(4rem,9vw,8.25rem)] leading-[.78] sm:mt-7">
+          <motion.h1 initial={{ opacity: 0, y: 35 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: .24, ease: [0.22,1,.36,1] }} className="mt-5 font-display text-[clamp(4rem,9vw,8.25rem)] leading-[.84] sm:mt-7">
             Camila<br /><span className="ml-[.38em] italic text-ivory">Caruso</span>
           </motion.h1>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .9, delay: .7 }} className="mt-5 flex max-w-2xl flex-col gap-4 sm:mt-8 sm:flex-row sm:items-end sm:justify-between sm:gap-6">

@@ -4,7 +4,8 @@ import { ArrowUpRight } from 'lucide-react';
 import Header from '@/components/Header';
 import HomeHero from '@/components/HomeHero';
 import ModelExperience from '@/components/ModelExperience';
-import PortfolioGallery, { type Project } from '@/components/PortfolioGallery';
+import PortfolioShowcase, { type Project } from '@/components/PortfolioShowcase';
+import ArchiveViewer from '@/components/ArchiveViewer';
 import Reveal from '@/components/ui/Reveal';
 import ParallaxImage from '@/components/ui/ParallaxImage';
 import SectionHeading from '@/components/SectionHeading';
@@ -32,7 +33,7 @@ export default function HomePage() {
           <div className="container-shell grid gap-8 lg:grid-cols-12 lg:items-end">
             <Reveal className="lg:col-span-8">
               <p className="eyebrow text-brass-dark">Experiência Camila Caruso</p>
-              <h2 className="mt-6 max-w-5xl font-display text-[clamp(2.8rem,5.6vw,5.8rem)] leading-[.92]">Trazendo uma experiência para você, transformando o seu ambiente.</h2>
+              <h2 className="mt-6 max-w-5xl font-display text-[clamp(2.8rem,5.6vw,5.8rem)] leading-[1.02]">Trazendo uma experiência para você, transformando o seu ambiente.</h2>
             </Reveal>
             <Reveal delay={.08} className="lg:col-span-3 lg:col-start-10 lg:pb-2">
               <p className="text-sm leading-7 text-ink/65">Projetos de Arquitetura Residenciais e Comerciais.</p>
@@ -46,14 +47,15 @@ export default function HomePage() {
               <ParallaxImage
                 src="/assets/profile/camila-portrait.jpeg"
                 alt="Camila Caruso, arquiteta"
-                sizes="(max-width: 1023px) 100vw, 620px"
+                sizes="(max-width: 480px) 85vw, (max-width: 1023px) 100vw, 620px"
+                quality={88}
                 className="mx-auto aspect-[4/5] w-full max-w-[620px]"
                 imageClassName="object-cover object-top"
               />
             </Reveal>
             <div className="min-w-0">
               <Reveal><p className="eyebrow text-brass-dark">Sobre Camila Caruso</p></Reveal>
-              <Reveal delay={.06}><h2 className="mt-7 font-display text-[clamp(3.4rem,5.6vw,6.2rem)] leading-[.9]">Cada projeto importa.<br /><span className="italic text-sage">Cada cliente é único.</span></h2></Reveal>
+              <Reveal delay={.06}><h2 className="mt-7 font-display text-[clamp(3.4rem,5.6vw,6.2rem)] leading-[1.02]">Cada projeto importa.<br /><span className="italic text-sage">Cada cliente é único.</span></h2></Reveal>
               <Reveal delay={.1}><p className="mt-8 max-w-xl text-sm leading-8 text-ink/70">Estamos no mercado há 20 anos trabalhando com atendimento personalizado. Sabemos que, a cada novo projeto, estamos lidando com sonhos, expectativas e realizações. Por isso, cada cliente se torna nosso objetivo pessoal.</p></Reveal>
               <Reveal delay={.14}>
                 <div className="mt-9 border-t border-ink/20 pt-7">
@@ -84,7 +86,7 @@ export default function HomePage() {
               <div className="lg:col-span-8"><SectionHeading eyebrow="Projetos selecionados" title="Arquitetura para ser vivida." text="Uma seleção de projetos residenciais, interiores e espaços dedicados à saúde." /></div>
               <p className="text-sm leading-7 text-ink/65 lg:col-span-3 lg:col-start-10 lg:pb-2">Projetos autorais desenvolvidos com precisão técnica, atendimento personalizado e gestão integral.</p>
             </div>
-            <div className="mt-14 lg:mt-20"><PortfolioGallery projects={homeFeaturedProjects as Project[]} /></div>
+            <div className="mt-14 lg:mt-20"><PortfolioShowcase projects={homeFeaturedProjects as Project[]} /></div>
           </div>
         </section>
 
@@ -100,7 +102,7 @@ export default function HomePage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/15" />
                 <div className="absolute inset-x-0 bottom-0 p-7 lg:p-9 xl:p-11">
                   <p className="text-[10px] uppercase tracking-[.18em] text-brass">{item.number} · {item.label}</p>
-                  <div className="mt-3 flex items-end justify-between gap-4"><h2 className="font-display text-5xl leading-none xl:text-6xl">{item.title}</h2><ArrowUpRight className="mb-1 h-6 w-6 shrink-0 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" /></div>
+                  <div className="mt-3 flex items-end justify-between gap-4"><h2 className="font-display text-5xl leading-[1.02] xl:text-6xl">{item.title}</h2><ArrowUpRight className="mb-1 h-6 w-6 shrink-0 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" /></div>
                   <p className="mt-4 max-w-sm text-sm leading-7 text-white/75">{item.text}</p>
                 </div>
               </Link>
@@ -114,7 +116,7 @@ export default function HomePage() {
               <div className="lg:col-span-7"><SectionHeading eyebrow="Acervo do escritório" title="Duas décadas de projetos." text="Mantemos aqui o acervo visual apresentado no site original, respeitando a escala dos arquivos disponíveis." /></div>
               <p className="text-[10px] uppercase tracking-[.17em] text-ink/70 lg:col-span-3 lg:col-start-10 lg:pb-2">Arquivo · 01—12</p>
             </div>
-            <div className="mx-auto mt-14 max-w-[1100px] lg:mt-20"><PortfolioGallery projects={homeArchiveProjects as Project[]} /></div>
+            <div className="mt-14 lg:mt-20"><ArchiveViewer projects={homeArchiveProjects as Project[]} /></div>
           </div>
         </section>
 

@@ -39,7 +39,7 @@ export default function ModelExperience() {
         <div className="relative z-10 lg:col-span-5 xl:col-span-4">
           <Reveal>
             <p className="eyebrow text-brass">Do conceito à obra</p>
-            <h2 id="model-experience-title" className="mt-7 max-w-xl font-display text-[clamp(3.3rem,5.6vw,6.2rem)] leading-[.9]">
+            <h2 id="model-experience-title" className="mt-7 max-w-xl font-display text-[clamp(3.3rem,5.6vw,6.2rem)] leading-none">
               Ideias ganham forma <span className="italic text-[#b7ad9c]">antes da matéria.</span>
             </h2>
           </Reveal>
