@@ -23,11 +23,15 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 92px;
+  scroll-padding-top: 84px;
   background: var(--paper);
+  scrollbar-color: var(--brass) var(--paper);
+  scrollbar-width: thin;
 }
 
-section[id] { scroll-margin-top: 92px; }
+section[id] { scroll-margin-top: 0; }
+
+.specialty-anchor { scroll-margin-top: 56px; }
 
 body {
   margin: 0;
@@ -50,8 +54,15 @@ button, input, textarea, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 
 .container-shell {
-  width: min(100% - 40px, 1380px);
+  width: min(100% - 40px, 1480px);
   margin-inline: auto;
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--paper); }
+::-webkit-scrollbar-thumb {
+  border: 2px solid var(--paper);
+  background: var(--brass);
 }
 
 .hairline { border-color: color-mix(in srgb, currentColor 18%, transparent); }
@@ -154,9 +165,10 @@ select:focus-visible {
 .skip-link:focus { transform: translateY(0); }
 
 @media (max-width: 768px) {
-  html { scroll-padding-top: 76px; }
-  section[id] { scroll-margin-top: 76px; }
-  .container-shell { width: min(100% - 28px, 1380px); }
+  html { scroll-padding-top: 72px; }
+  section[id] { scroll-margin-top: 0; }
+  .specialty-anchor { scroll-margin-top: 52px; }
+  .container-shell { width: min(100% - 28px, 1480px); }
   .editorial-grid { background-size: calc(100% / 2) 100%, 100% 7rem; }
 }
 

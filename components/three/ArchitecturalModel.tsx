@@ -103,12 +103,11 @@ export default function ArchitecturalModel() {
   useFrame((state) => {
     if (!group.current) return;
     const t = state.clock.elapsedTime;
-    const scroll = typeof window === 'undefined' ? 0 : Math.min(window.scrollY / Math.max(window.innerHeight, 1), 1.5);
-    const targetY = -.08 + state.pointer.x * .09 + scroll * .07;
-    const targetX = -.1 + state.pointer.y * .05 + scroll * .05;
-    group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, targetY, .035);
-    group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, targetX, .035);
-    group.current.position.y = Math.sin(t * .38) * .025 - scroll * .08;
+    const targetY = -.16 + state.pointer.x * .16 + Math.sin(t * .24) * .065;
+    const targetX = -.1 + state.pointer.y * .07 + Math.cos(t * .2) * .018;
+    group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, targetY, .04);
+    group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, targetX, .04);
+    group.current.position.y = Math.sin(t * .62) * .065;
     if (light.current) light.current.position.x = 5 + Math.sin(t * .16) * 1.2;
   });
 
@@ -118,8 +117,8 @@ export default function ArchitecturalModel() {
       <hemisphereLight args={['#f3ede2', '#2b2b28', 1.05]} />
       <directionalLight ref={light} position={[5, 8, 5]} intensity={2.1} color="#fff2dd" castShadow shadow-mapSize={[1024, 1024]} />
       <pointLight position={[-4, 2.5, -3]} color="#c89662" intensity={2.4} distance={12} />
-      <Float speed={.55} rotationIntensity={.015} floatIntensity={.045}>
-        <group ref={group} rotation={[-.1, -.08, 0]} scale={.78}>
+      <Float speed={.72} rotationIntensity={.025} floatIntensity={.075}>
+        <group ref={group} rotation={[-.1, -.16, 0]} scale={.82}>
           <House />
         </group>
       </Float>

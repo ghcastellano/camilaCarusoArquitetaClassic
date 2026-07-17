@@ -49,8 +49,8 @@ async function runViewport(name, viewport) {
 await runViewport('desktop', { width: 1440, height: 900 });
 await runViewport('mobile', { width: 390, height: 844 });
 
-const expectedNav = {
-  '/': ['Home', 'Camila Caruso', 'Projetos', 'Orçamento', 'Residencial', 'Saúde'],
+const expectedNav = ['Home', 'Camila Caruso', 'Projetos', 'Orçamento', 'Residencial', 'Saúde'];
+const expectedLocalNav = {
   '/residencial': ['Início', 'Diferenciais', 'Processo', 'Portfólio', 'Depoimentos', 'Sobre', 'FAQ', 'Contato'],
   '/saude': ['Início', 'Diferenciais', 'Processo', 'Portfólio', 'Sobre', 'Contato'],
 };
@@ -132,8 +132,7 @@ async function runResponsiveAudit(name, viewport) {
 
     let labels;
     if (viewport.width >= 1280) {
-      labels = await page.getByRole('navigation', { name: path === '/' ? 'Navegação principal' : 'Navegação desta página' }).getByRole('link').allTextContents();
-      if (path === '/') labels = labels.filter((label) => label.trim() !== 'Fale conosco');
+      labels = await page.getByRole('navigation', { name: 'Navegação principal' }).getByRole('link').allTextContents();
     } else {
       await page.getByRole('button', { name: 'Abrir menu' }).click();
       const mobileNav = page.getByRole('navigation', { name: 'Menu móvel' });
@@ -142,8 +141,14 @@ async function runResponsiveAudit(name, viewport) {
       if (!menuBox || menuBox.width < Math.min(viewport.width - 28, 292)) errors.push('mobile menu is not correctly sized');
       await page.getByRole('button', { name: 'Fechar menu' }).click();
     }
-    labels = labels.map((label) => label.replace(/\d+$/, '').trim());
-    if (JSON.stringify(labels) !== JSON.stringify(expectedNav[path])) errors.push(`navigation order: ${JSON.stringify(labels)}`);
+    labels = labels.map((label) => label.replace(/\d+$/, '').trim()).filter((label) => label !== 'Fale conosco');
+    if (JSON.stringify(labels) !== JSON.stringify(expectedNav)) errors.push(`global navigation order: ${JSON.stringify(labels)}`);
+
+    if (path !== '/') {
+      const localName = path === '/saude' ? 'Seções de Saúde' : 'Seções de Residencial';
+      const localLabels = (await page.getByRole('navigation', { name: localName }).getByRole('link').allTextContents()).map((label) => label.trim());
+      if (JSON.stringify(localLabels) !== JSON.stringify(expectedLocalNav[path])) errors.push(`local navigation order: ${JSON.stringify(localLabels)}`);
+    }
 
     results.push({ responsive: name, viewport, path, errors, audit });
     await page.close();
@@ -165,8 +170,8 @@ for (const item of [
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await context.newPage();
   await page.goto(base, { waitUntil: 'networkidle' });
-  await page.mouse.move(1120, 390);
-  await page.waitForTimeout(1800);
+  await page.getByRole('heading', { name: /Ideias ganham forma/ }).scrollIntoViewIfNeeded();
+  await page.waitForTimeout(2200);
   const canvas = page.locator('canvas');
   const canvasCount = await canvas.count();
   if (canvasCount !== 1) throw new Error(`Expected one WebGL canvas, found ${canvasCount}`);
@@ -201,7 +206,46 @@ for (const item of [
   await page.getByRole('button', { name: 'Próximo projeto' }).click();
   await page.getByRole('button', { name: 'Fechar imagem' }).click();
   await page.getByRole('dialog').waitFor({ state: 'hidden' });
-  results.push({ interaction: 'home lightbox + canvas', ok: true, canvasPixels: { standardDeviation: Number(standardDeviation.toFixed(2)), meanFrameDiff: Number(meanFrameDiff.toFixed(3)) } });
+  results.push({ interaction: 'home lightbox + animated process canvas', ok: true, canvasPixels: { standardDeviation: Number(standardDeviation.toFixed(2)), meanFrameDiff: Number(meanFrameDiff.toFixed(3)) } });
+  await context.close();
+}
+
+// Global page order and anchor offsets.
+{
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await context.newPage();
+  await page.goto(base, { waitUntil: 'networkidle' });
+  const mainNav = page.getByRole('navigation', { name: 'Navegação principal' });
+  await mainNav.getByRole('link', { name: 'Camila Caruso' }).click();
+  await page.waitForTimeout(1800);
+  const about = await page.locator('#sobre').evaluate((element) => ({ top: Math.round(element.getBoundingClientRect().top), y: Math.round(scrollY) }));
+  await mainNav.getByRole('link', { name: 'Projetos' }).click();
+  await page.waitForTimeout(1800);
+  const projects = await page.locator('#projetos').evaluate((element) => ({ top: Math.round(element.getBoundingClientRect().top), y: Math.round(scrollY) }));
+  if (about.top < 82 || about.top > 86) throw new Error(`Desktop About anchor offset is ${about.top}px, expected 84px`);
+  if (projects.top < 82 || projects.top > 86) throw new Error(`Desktop Projects anchor offset is ${projects.top}px, expected 84px`);
+  if (projects.y <= about.y) throw new Error(`Home page order is not linear: Projects ${projects.y} <= About ${about.y}`);
+  results.push({ interaction: 'home linear navigation + desktop anchors', ok: true, about, projects });
+  await context.close();
+}
+
+// Specialty pages retain the global shell and expose contextual navigation below it.
+{
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await context.newPage();
+  await page.goto(`${base}/residencial`, { waitUntil: 'networkidle' });
+  const localNav = page.getByRole('navigation', { name: 'Seções de Residencial' });
+  await localNav.getByRole('link', { name: 'Processo' }).click();
+  await page.waitForTimeout(1800);
+  const geometry = await page.evaluate(() => {
+    const target = document.querySelector('#processo')?.getBoundingClientRect();
+    const nav = document.querySelector('nav[aria-label="Seções de Residencial"]')?.parentElement?.parentElement?.getBoundingClientRect();
+    const visibleSection = nav ? document.elementFromPoint(innerWidth / 2, nav.bottom + 2)?.closest('section')?.id : null;
+    return { targetTop: target && Math.round(target.top), navBottom: nav && Math.round(nav.bottom), visibleSection };
+  });
+  if (!geometry.targetTop || geometry.targetTop < 70 || geometry.targetTop > 145) throw new Error(`Specialty anchor offset is invalid: ${JSON.stringify(geometry)}`);
+  if (geometry.visibleSection !== 'processo') throw new Error(`Previous section remains visible below specialty navigation: ${JSON.stringify(geometry)}`);
+  results.push({ interaction: 'specialty contextual navigation + anchor', ok: true, geometry });
   await context.close();
 }
 
@@ -213,8 +257,12 @@ for (const item of [
   const menu = page.getByRole('button', { name: 'Abrir menu' });
   await menu.click();
   await page.getByRole('navigation', { name: 'Menu móvel' }).waitFor({ state: 'visible' });
-  await page.getByRole('button', { name: 'Fechar menu' }).click();
-  results.push({ interaction: 'mobile menu', ok: true });
+  await page.waitForTimeout(350);
+  await page.getByRole('navigation', { name: 'Menu móvel' }).getByRole('link', { name: /Camila Caruso/ }).click();
+  await page.waitForTimeout(1800);
+  const aboutTop = await page.locator('#sobre').evaluate((element) => Math.round(element.getBoundingClientRect().top));
+  if (aboutTop < 70 || aboutTop > 74) throw new Error(`Mobile About anchor offset is ${aboutTop}px, expected 72px`);
+  results.push({ interaction: 'mobile menu + anchor', ok: true, aboutTop });
   await context.close();
 }
 

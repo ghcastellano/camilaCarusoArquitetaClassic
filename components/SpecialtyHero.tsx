@@ -8,8 +8,8 @@ import { whatsappUrl } from '@/lib/content';
 export default function SpecialtyHero({ variant, image, eyebrow, title, subtitle, message }: { variant: 'residential' | 'health'; image: string; eyebrow: string; title: string; subtitle: string; message: string }) {
   const health = variant === 'health';
   return (
-    <section id="home" className={`noise relative mt-[76px] min-h-[620px] overflow-hidden text-white lg:mt-[88px] lg:min-h-[680px] lg:h-[calc(100svh-88px)] lg:max-h-[920px] ${health ? 'bg-petrol' : 'bg-ink'}`}>
-      <Image src={image} alt="" fill priority quality={90} sizes="100vw" className={`object-cover ${health ? 'object-[64%_center] sm:object-center' : 'object-[60%_center] sm:object-center'}`} />
+    <section id="home" className={`noise relative mt-[72px] min-h-[620px] overflow-hidden text-white lg:mt-[84px] lg:h-[calc(94svh-84px)] lg:min-h-[640px] lg:max-h-[920px] ${health ? 'bg-petrol' : 'bg-ink'}`}>
+      <Image src={image} alt="" fill preload quality={90} sizes="100vw" className={`object-cover ${health ? 'object-[64%_center] sm:object-center' : 'object-[60%_center] sm:object-center'}`} />
       <div className={`absolute inset-0 ${health ? 'bg-[linear-gradient(90deg,rgba(17,47,53,.97)_0%,rgba(17,47,53,.78)_48%,rgba(17,47,53,.26)_100%)]' : 'bg-[linear-gradient(90deg,rgba(12,12,11,.95)_0%,rgba(12,12,11,.72)_50%,rgba(12,12,11,.22)_100%)]'}`} />
       <div className="absolute inset-0 editorial-grid opacity-[.18] mix-blend-screen" />
       <div className="container-shell relative z-10 flex min-h-[620px] items-end py-10 sm:py-14 lg:h-full lg:min-h-0 lg:items-center lg:py-0">

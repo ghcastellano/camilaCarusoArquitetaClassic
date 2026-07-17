@@ -40,7 +40,7 @@ export default function HeroCanvas() {
               gl.toneMapping = THREE.ACESFilmicToneMapping;
               gl.toneMappingExposure = .68;
             }}
-            camera={{ position: [6.8, 5.2, 7.8], fov: 31, near: .1, far: 100 }}
+            camera={{ position: [8.6, 6.5, 9.8], fov: 32, near: .1, far: 100 }}
             style={{ background: 'transparent' }}
           >
             <Suspense fallback={null}><ArchitecturalModel /></Suspense>
