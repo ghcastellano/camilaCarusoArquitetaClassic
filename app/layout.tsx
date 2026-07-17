@@ -15,7 +15,8 @@ const sans = Manrope({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://camilacaruso-arquiteta.vercel.app'),
+  metadataBase: new URL('https://camila-caruso-arquiteta-classic.vercel.app'),
+  robots: { index: false, follow: false },
   title: {
     default: 'Camila Caruso — Arquitetura e Interiores',
     template: '%s | Camila Caruso',

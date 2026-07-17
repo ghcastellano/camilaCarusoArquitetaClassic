@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://camilacaruso-arquiteta.vercel.app';
+  const base = 'https://camila-caruso-arquiteta-classic.vercel.app';
   return [
     { url: base, changeFrequency: 'monthly', priority: 1 },
     { url: `${base}/residencial`, changeFrequency: 'monthly', priority: .9 },
